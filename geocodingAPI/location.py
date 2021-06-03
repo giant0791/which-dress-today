@@ -1,4 +1,3 @@
-# loc = Location('Kreuzsteinweg 79a Fuerth Germany')
 import json
 
 class Location:
