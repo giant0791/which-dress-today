@@ -5,7 +5,7 @@ class Location:
         if house_no is None:
             self.street_ = street
         else:
-            self.street_ = house_no + '+' + street
+            self.street_ = house_no + ' ' + street
 
         self.city_ = city
         self.country_ = country

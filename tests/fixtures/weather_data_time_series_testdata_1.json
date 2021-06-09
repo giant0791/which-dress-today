@@ -1,0 +1,42 @@
+{
+    "type":"Feature",
+    "geometry": {
+        "type":"Point",
+        "coordinates":[
+            10,
+            60.1,
+            267]
+    },
+    "properties": {
+        "meta": {
+            "updated_at":"2021-06-07T11:56:54Z",
+            "units": {
+                "air_pressure_at_sea_level":"hPa",
+                "wind_speed_percentile_90":"m/s"
+            }
+        },
+        "timeseries":[
+            {
+                "time":"2021-06-08T12:00:00Z",
+                "data":"data point #1"
+            },
+            {
+                "time":"2021-06-08T12:00:01Z",
+                "data":"data point #2"
+            },
+            {
+                "time":"2021-06-08T12:00:02Z",
+                "data":"data point #3"
+            },
+            {
+                "time":"2021-06-08T12:00:03Z",
+                "data":"data point #4"
+            },
+            {
+                "time":"2021-06-08T12:00:04Z",
+                "data":"data point #5"
+            }
+        ]
+    }
+}
+            

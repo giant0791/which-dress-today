@@ -1,11 +1,67 @@
 import requests
-
-import geocodingAPI
+from typing import Optional
 
 from geocodingAPI.location import Location
 
+class GeoCoords:
+    """Holds data for a geo coordinates.
+       Invalid coordinates have city = '#UNDEF#'
+
+    Attributes:
+        city: Name of the city
+        lat (float): Latitude 
+        lon (float): Longitude 
+        alt (int): Altitude, optional
+    """
+    def __init__(self, city: str, lat: float, lon: float, alt: Optional[int] = None):
+        self._city = city
+        self._lat = lat
+        self._lon = lon
+        if alt is not None:
+            self._alt = int(round(alt,0))
+        else:
+            self._alt = None
+
+    @property
+    def city(self):
+        return self._city
+
+    @city.setter
+    def city(self, city):
+        self._city = city
+
+    @property
+    def lat(self):
+        return self._lat
+    
+    @lat.setter
+    def lat(self, lat):
+        self._lat = lat
+
+    @property
+    def lon(self):
+        return self._lon
+    
+    @lon.setter
+    def lon(self, lon):
+        self._lon = lon
+
+    @property
+    def alt(self):
+        return self._alt
+    
+    @alt.setter
+    def alt(self, alt):
+        self._alt = alt
+    
+    def __repr__(self) -> str:
+        return (
+            f"GeoCoords({self._city}, {self._lat}, {self._lon}, "
+            + f"alt={self._alt})"
+        )
+
 class GeoCodingAPI:
-    def __init__(self, location):
+    def __init__(self, location: Location):
         self.location = location
 
     # Queries the OSM server to get lat and lon
@@ -22,20 +78,44 @@ class GeoCodingAPI:
     #         something went wrong, geo_coord['status'] contains details
     # else:
     #     cannot contact server
-    def search(self):
+    def search_deprecated(self):
         # Initialize the result dict object
         geo_coord = {'lat': 'None', 'lon': 'None', 'status': 'Not valid'}
         
         # Initialize the parameters for the API call
-        payload = self.request_url_payload()
+        payload = self.search_url_payload()
         
         # Query the server for the geo coordinates
         r = requests.get('https://nominatim.openstreetmap.org/search', params=payload)
         geo_coord['status'] = r.status_code
         if r.ok:
-            json_obj = r.json()
-            geo_coord['lat'] = json_obj['lat']
-            geo_coord['lon'] = json_obj['lon']
+            # REMEMBER: 
+            #   Nominatim returns a list of 1 json objects, thus double indeces
+            r_dict = r.json()
+            geo_coord['lat'] = r_dict[0]['lat']
+            geo_coord['lon'] = r_dict[0]['lon']
+
+        return geo_coord
+
+    # Improved version with better data model design of the search() methon
+    def search(self) -> GeoCoords:
+        
+        # Initialize the geo coord object
+        geo_coord = GeoCoords('#UNDEF#', 0.0, 0.0)
+        print(geo_coord)
+        
+        # Initialize the parameters for the API call
+        payload = self.search_url_payload()
+        
+        # Query the server for the geo coordinates
+        r = requests.get('https://nominatim.openstreetmap.org/search', params=payload)
+        if r.ok:
+            # REMEMBER: 
+            #   Nominatim returns a list of 1 json objects, thus double indeces
+            r_dict = r.json()
+            geo_coord.city = self.location.city
+            geo_coord.lat = float(r_dict[0]['lat'])
+            geo_coord.lon = float(r_dict[0]['lon'])
 
         return geo_coord
 
